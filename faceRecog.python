@@ -1,0 +1,34 @@
+import cv2
+import dlib
+
+# 加载人脸检测器和人脸关键点检测器
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+
+# 加载图像
+image = cv2.imread("face_image.jpg")
+
+# 将图像转换为灰度
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# 使用人脸检测器检测人脸
+faces = detector(gray)
+
+# 对每个检测到的人脸进行处理
+for face in faces:
+    # 使用人脸关键点检测器获取人脸关键点
+    landmarks = predictor(gray, face)
+
+    # 绘制人脸矩形框
+    x, y, w, h = face.left(), face.top(), face.width(), face.height()
+    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    # 绘制人脸关键点
+    for i in range(68):
+        x, y = landmarks.part(i).x, landmarks.part(i).y
+        cv2.circle(image, (x, y), 2, (0, 0, 255), -1)
+
+# 显示结果图像
+cv2.imshow("Face Recognition", image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
